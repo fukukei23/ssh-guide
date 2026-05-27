@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Android SSH接続ガイド</title>
+<style>
+  :root {
+    --bg: #1a1b26;
+    --card: #24283b;
+    --text: #c0caf5;
+    --accent: #7aa2f7;
+    --green: #9ece6a;
+    --red: #f7768e;
+    --yellow: #e0af68;
+    --border: #3b4261;
+    --code-bg: #414868;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px;
+    line-height: 1.7;
+  }
+  h1 { color: var(--accent); font-size: 1.4em; margin-bottom: 16px; text-align: center; }
+  h2 { color: var(--accent); font-size: 1.1em; margin: 20px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .cmd-group { margin: 8px 0; }
+  .cmd-label { color: var(--yellow); font-size: 0.85em; margin-bottom: 4px; }
+  .cmd {
+    background: var(--code-bg);
+    color: var(--green);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.95em;
+    word-break: break-all;
+    cursor: pointer;
+    position: relative;
+    user-select: all;
+    -webkit-user-select: all;
+  }
+  .cmd:active { background: var(--accent); color: var(--bg); }
+  .cmd::after {
+    content: 'タップしてコピー';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7em;
+    color: var(--text);
+    opacity: 0.5;
+    font-family: sans-serif;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.9em; }
+  th { background: var(--code-bg); color: var(--accent); padding: 8px; text-align: left; }
+  td { padding: 8px; border-bottom: 1px solid var(--border); }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
+  .tag-ok { background: #1a2e1a; color: var(--green); }
+  .tag-ng { background: #2e1a1a; color: var(--red); }
+  .tag-wait { background: #2e2a1a; color: var(--yellow); }
+  .tip { background: #1a2540; border-left: 3px solid var(--accent); padding: 10px 12px; margin: 8px 0; border-radius: 0 8px 8px 0; font-size: 0.9em; }
+  .section-toggle { display: none; }
+  .section-label {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    color: var(--accent);
+    font-weight: bold;
+    text-align: center;
+  }
+  .section-content { display: none; }
+  .section-toggle:checked + .section-label + .section-content { display: block; }
+  .section-toggle:checked + .section-label { border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>📱 Android → Claude Code 接続ガイド</h1>
+
+<!-- 接続 -->
+<div class="card">
+  <h2>⚡ 接続（2行）</h2>
+  <div class="cmd-group">
+    <div class="cmd-label">Termuxで実行:</div>
+    <div class="cmd" onclick="copyCmd(this)">ssh yn4416@100.115.156.98</div>
+  </div>
+  <div class="cmd-group">
+    <div class="cmd-label">PCに入ったら:</div>
+    <div class="cmd" onclick="copyCmd(this)">tmux attach -t claude</div>
+  </div>
+</div>
+
+<!-- 新規セッション -->
+<input type="checkbox" id="s1" class="section-toggle">
+<label for="s1" class="section-label">▶ 新規セッションを作る</label>
+<div class="section-content">
+  <div class="card">
+    <div class="cmd-group">
+      <div class="cmd" onclick="copyCmd(this)">ssh yn4416@100.115.156.98</div>
+    </div>
+    <div class="cmd-group">
+      <div class="cmd" onclick="copyCmd(this)">tmux new -s claude</div>
+    </div>
+    <div class="cmd-group">
+      <div class="cmd" onclick="copyCmd(this)">claude</div>
+    </div>
+  </div>
+</div>
+
+<!-- tmux操作 -->
+<input type="checkbox" id="s2" class="section-toggle">
+<label for="s2" class="section-label">▶ tmux 操作</label>
+<div class="section-content">
+  <div class="card">
+    <table>
+      <tr><th>操作</th><th>方法</th></tr>
+      <tr><td>抜ける（維持）</td><td><code>Ctrl+B</code> → <code>D</code></td></tr>
+      <tr><td>戻る</td><td><div class="cmd" style="display:inline;padding:4px 8px;font-size:0.85em" onclick="copyCmd(this)">tmux attach -t claude</div></td></tr>
+      <tr><td>一覧</td><td><div class="cmd" style="display:inline;padding:4px 8px;font-size:0.85em" onclick="copyCmd(this)">tmux ls</div></td></tr>
+      <tr><td>終了</td><td><div class="cmd" style="display:inline;padding:4px 8px;font-size:0.85em" onclick="copyCmd(this)">tmux kill-session -t claude</div></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 切断 -->
+<input type="checkbox" id="s3" class="section-toggle">
+<label for="s3" class="section-label">▶ 切断手順</label>
+<div class="section-content">
+  <div class="card">
+    <p>1. <code>Ctrl+B</code> → <code>D</code>（tmuxデタッチ）</p>
+    <p>2. <code>exit</code>（SSH切断）</p>
+    <div class="tip">Claude Codeはtmux内で動き続けます。再接続時はセッションがそのまま残っています。</div>
+  </div>
+</div>
+
+<!-- つながらない時 -->
+<input type="checkbox" id="s4" class="section-toggle">
+<label for="s4" class="section-label">▶ つながらない時</label>
+<div class="section-content">
+  <div class="card">
+    <table>
+      <tr><th>症状</th><th>やること</th></tr>
+      <tr><td>パスワード聞かれる</td><td><code>yn4416@</code> を付けてるか確認</td></tr>
+      <tr><td>Connection refused</td><td>PCでWSLターミナルを開く</td></tr>
+      <tr><td>Time out</td><td>両デバイスのTailscale起動確認</td></tr>
+      <tr><td>画面乱れ</td><td><code>reset</code> or Termux再起動</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- デバイス -->
+<div class="card">
+  <h2>📡 デバイス</h2>
+  <table>
+    <tr><th>デバイス</th><th>IP</th><th>状態</th></tr>
+    <tr><td>PC</td><td>100.115.156.98</td><td><span class="tag tag-ok">常時接続必要</span></td></tr>
+    <tr><td>razr-50s</td><td>100.80.187.46</td><td><span class="tag tag-ok">設定済み</span></td></tr>
+    <tr><td>galaxy-z-flip7</td><td>100.106.53.69</td><td><span class="tag tag-wait">未設定</span></td></tr>
+  </table>
+</div>
+
+<script>
+function copyCmd(el) {
+  const text = el.textContent.replace('タップしてコピー','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = el.textContent;
+    el.style.background = 'var(--green)';
+    el.style.color = 'var(--bg)';
+    setTimeout(() => {
+      el.style.background = '';
+      el.style.color = '';
+    }, 500);
+  });
+}
+</script>
+
+</body>
+</html>
