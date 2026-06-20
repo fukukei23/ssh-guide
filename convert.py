@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SSOT Guide: Markdown → モバイル最適化HTML変換スクリプト."""
+"""Android SSHガイド: Markdown → モバイル最適化HTML変換スクリプト."""
 
 import re
 import unicodedata
@@ -43,16 +43,11 @@ def get_build_info() -> tuple[str, str]:
 
 # 既存章の手動定義
 CHAPTER_MAP = {
-    "00_概要.md": {"slug": "00-overview", "title": "概要", "icon": "🏛️", "desc": "SSOTとは・設計の3原則・全体アーキテクチャ"},
-    "01_ディレクトリ設計.md": {"slug": "01-structure", "title": "ディレクトリ設計", "icon": "📁", "desc": "vault階層構造と責務分離・MOC・チャーター"},
-    "02_LLMルーティング.md": {"slug": "02-llm-routing", "title": "LLMルーティング", "icon": "⚡", "desc": "複数LLMの使い分け設計・ローカルプロキシパターン"},
-    "03_Claude-Code統合.md": {"slug": "03-claude-code", "title": "Claude Code統合", "icon": "🤖", "desc": "CLAUDE.md・Hooks・Memoryシステム設計"},
-    "04_自律開発ループ.md": {"slug": "04-autonomous", "title": "自律開発ループ", "icon": "🔄", "desc": "Cron連動の自律実装・完了通知・安全ガード"},
-    "05_記録・ドキュメント.md": {"slug": "05-recording", "title": "記録・ドキュメント", "icon": "📝", "desc": "決定ログ・日記・MOC・ハンドオフ文書"},
-    "06_開発手法カタログ.md": {"slug": "06-methods", "title": "開発手法カタログ", "icon": "🗂️", "desc": "TDD・BDD・DDD・仕様駆動・クリーンアーキテクチャ"},
-    "07_キャリア戦略.md": {"slug": "07-career", "title": "キャリア戦略", "icon": "💼", "desc": "AIネイティブ開発者としての戦略・ポートフォリオ設計"},
-    "08_プロジェクト紹介.md": {"slug": "08-projects", "title": "プロジェクト紹介", "icon": "🚀", "desc": "公開リポジトリ一覧・自律開発の実践"},
-    "09_ガイドサイト構築.md": {"slug": "09-how-this-works", "title": "ガイドサイト構築", "icon": "🔧", "desc": "convert.py・テストスイート・GitHub Pages・CSS変数"},
+    "00_概要.md": {"slug": "00-overview", "title": "概要", "icon": "📋", "desc": "使い方・前提条件・デバイス一覧"},
+    "01_初回セットアップ.md": {"slug": "01-setup", "title": "初回セットアップ", "icon": "🔧", "desc": "蓋閉じ・Tailscale・Termux・SSH鍵・tmux起動（約15分）"},
+    "02_毎回の手順.md": {"slug": "02-daily", "title": "毎回の手順", "icon": "🔁", "desc": "ssh接続・tmux操作・切断のクイックリファレンス"},
+    "03_PC側ヘルスチェック.md": {"slug": "03-healthcheck", "title": "PC側ヘルスチェック", "icon": "🩺", "desc": "Tailscale状態・sshd LISTEN・スリープ設定の診断"},
+    "04_トラブル対応.md": {"slug": "04-troubleshooting", "title": "トラブル対応", "icon": "🆘", "desc": "password/Connection refused/timeout等のFAQ"},
 }
 
 
@@ -158,23 +153,23 @@ CHAPTER_TEMPLATE = Template("""\
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} — SSOT Guide</title>
-    <meta name="description" content="Claude Code CLI {{ title }}の解説 — AIコーディングアシスタント完全ガイド">
-    <meta property="og:title" content="{{ title }} — SSOT Guide">
-    <meta property="og:description" content="Claude Code CLI {{ title }}の解説">
+    <title>{{ title }} — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — {{ title }}">
+    <meta property="og:title" content="{{ title }} — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — {{ title }}">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="https://fukukei23.github.io/ssot-guide/chapters/{{ slug }}.html">
-    <meta property="og:image" content="https://fukukei23.github.io/ssot-guide/assets/ogp.png">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/{{ slug }}.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="../assets/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
 </head>
 <body>
     <header class="site-header">
         <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
             <span></span><span></span><span></span>
         </button>
-        <a href="../index.html" class="site-title">🏛️ SSOT Guide</a>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
         <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
             <span class="icon-light">☀️</span>
             <span class="icon-dark">🌙</span>
@@ -226,7 +221,7 @@ CHAPTER_TEMPLATE = Template("""\
     </main>
 
     <footer class="site-footer">
-        <p>SSOT Guide — <a href="https://github.com/fukukei23/ssot-guide">GitHub</a>
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
@@ -252,20 +247,20 @@ INDEX_TEMPLATE = Template("""\
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSOT 知識管理ガイド</title>
-    <meta name="description" content="AIと人間が協働するためのSSOT知識管理システムの設計・運用ガイド">
-    <meta property="og:title" content="SSOT 知識管理ガイド">
-    <meta property="og:description" content="AIと人間が協働するためのSSOT知識管理システムの設計・運用ガイド">
+    <title>Android SSH接続ガイド — スマホからClaude Codeを操作</title>
+    <meta name="description" content="スマホからPC（WSL2）上のClaude Code CLIを操作するSSH接続完全ガイド">
+    <meta property="og:title" content="Android SSH接続ガイド">
+    <meta property="og:description" content="スマホからPC（WSL2）上のClaude Code CLIを操作するSSH接続完全ガイド">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://fukukei23.github.io/ssot-guide/">
-    <meta property="og:image" content="https://fukukei23.github.io/ssot-guide/assets/ogp.png">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
 </head>
 <body class="index-page">
     <header class="site-header">
-        <span class="site-title">🏛️ SSOT Guide</span>
+        <span class="site-title">📱 Android SSHガイド</span>
         <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
             <span class="icon-light">☀️</span>
             <span class="icon-dark">🌙</span>
@@ -274,8 +269,8 @@ INDEX_TEMPLATE = Template("""\
 
     <main class="content">
         <section class="hero">
-            <h1>SSOT 知識管理ガイド</h1>
-            <p>AIと人間が協働するための<br>Single Source of Truth 設計・運用ガイド</p>
+            <h1>Android SSH接続ガイド</h1>
+            <p>スマホからPC（WSL2）のClaude Codeを操作する<br>Tailscale + Termux + SSH + tmux 完全ガイド</p>
         </section>
 
         <section class="chapter-grid">
@@ -293,31 +288,31 @@ INDEX_TEMPLATE = Template("""\
             <h2>📖 このガイドの特徴</h2>
             <div class="feature-grid">
                 <div class="feature-item">
-                    <span class="feature-icon">🏛️</span>
-                    <h3>設計哲学から</h3>
-                    <p>なぜSSOTが必要かという哲学から始まる実践的ガイド</p>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon">🤖</span>
-                    <h3>AI協働特化</h3>
-                    <p>Claude Code等のAIエージェントとの長期協働を前提に設計</p>
-                </div>
-                <div class="feature-item">
                     <span class="feature-icon">📱</span>
-                    <h3>モバイル対応</h3>
-                    <p>スマホからいつでも見返せるレスポンシブデザイン</p>
+                    <h3>スマホから操作</h3>
+                    <p>Android + Termux から外出先でもPCのClaude Codeを操作</p>
                 </div>
                 <div class="feature-item">
-                    <span class="feature-icon">🌙</span>
-                    <h3>ダークモード</h3>
-                    <p>目に優しいテーマ切替対応</p>
+                    <span class="feature-icon">🔐</span>
+                    <h3>鍵認証で安全</h3>
+                    <p>ed25519 鍵でパスワード不要・Tailscale VPN経由で暗号化</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔄</span>
+                    <h3>tmuxで常駐</h3>
+                    <p>セッションを維持したまま接続切断可能・復帰も一瞬</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🩺</span>
+                    <h3>トラブル対応</h3>
+                    <p>PC側ヘルスチェック手順とFAQでつながらない時も即解決</p>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="site-footer">
-        <p>SSOT Guide — <a href="https://github.com/fukukei23/ssot-guide">GitHub</a>
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
@@ -360,7 +355,7 @@ def filter_sections(text: str) -> str:
 
     text = "\n".join(result)
 
-    # 個人識別子のサニタイズ（ssot-guideはパブリック公開コンテンツのため不要）
+    # 個人識別子のサニタイズ（ssh-guideはパブリック公開コンテンツのため不要）
     pass
 
     # インライン個人情報のサニタイズ
