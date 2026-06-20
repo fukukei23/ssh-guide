@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初回セットアップ — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — 初回セットアップ">
+    <meta property="og:title" content="初回セットアップ — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — 初回セットアップ">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/01-setup.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html">🏠 ホーム</a>
+        </div>
+        
+        <a href="00-overview.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">📋</span>
+            概要
+        </a>
+        
+        <a href="01-setup.html"
+           class="sidebar-link active">
+            <span class="sidebar-icon">🔧</span>
+            初回セットアップ
+        </a>
+        
+        <a href="02-daily.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔁</span>
+            毎回の手順
+        </a>
+        
+        <a href="03-healthcheck.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🩺</span>
+            PC側ヘルスチェック
+        </a>
+        
+        <a href="04-troubleshooting.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🆘</span>
+            トラブル対応
+        </a>
+        
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chapter-nav-top">
+            
+            <a href="00-overview.html" class="nav-prev">← 概要</a>
+            
+            
+            <a href="02-daily.html" class="nav-next">毎回の手順 →</a>
+            
+        </div>
+
+        <article class="chapter-body">
+            <h1>初回セットアップ（約15分）</h1>
+<h2>Step 1: Windows設定（PC側）</h2>
+<ol>
+<li>
+<p><strong>蓋閉じスリープ防止</strong></p>
+<ul>
+<li>設定 → システム → 電源 → 画面とスリープ → 「カバーを閉じたとき」→「何もしない」</li>
+<li>または管理者PowerShell: <code>powercfg /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0 &amp;&amp; powercfg /setactive SCHEME_CURRENT</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Tailscaleインストール</strong>（未導入の場合）</p>
+<ul>
+<li><code>winget install Tailscale.Tailscale</code></li>
+<li>起動してログイン</li>
+</ul>
+</li>
+</ol>
+<h2>Step 2: Tailscale設定（スマホ側）</h2>
+<ol>
+<li><strong>Play Store で Tailscale インストール</strong></li>
+<li>ログイン（PCと同じアカウント）</li>
+<li>接続確認: PCのIP（100.115.156.98）が見えるか</li>
+</ol>
+<h2>Step 3: Termux設定（スマホ側）</h2>
+<ol>
+<li><strong>F-Droid から Termux インストール</strong>（Play Store版は古いのでNG）
+<ul>
+<li>https://f-droid.org/packages/com.termux/</li>
+</ul>
+</li>
+<li>Termux起動</li>
+<li>パッケージ更新: <code>pkg update &amp;&amp; pkg upgrade -y</code></li>
+<li>OpenSSH インストール: <code>pkg install openssh -y</code></li>
+</ol>
+<h2>Step 4: SSH鍵作成（スマホ側）</h2>
+<pre><code class="language-bash">ssh-keygen -t ed25519 -N &quot;&quot; -f ~/.ssh/id_ed25519
+</code></pre>
+<p>既に鍵がある場合は上書き不要（<code>n</code> でスキップ）。</p>
+<h2>Step 5: 公開鍵をPCに登録（スマホ側）</h2>
+<pre><code class="language-bash">ssh-copy-id yn4416@100.115.156.98
+</code></pre>
+<p>PCのパスワードを入力。成功すると <code>Number of key(s) added: 1</code> と表示。</p>
+<div class="callout callout-warn"><p>⚠️ <strong>注意</strong>: ユーザー名を省略しないこと。<code>ssh 100.115.156.98</code> だけだとTermuxのユーザー名（<code>u0_aXX</code>）になりパスワードを聞かれる。必ず <code>yn4416@</code> を付ける。</p></div>
+<h2>Step 6: パスワードなしログイン確認（スマホ側）</h2>
+<pre><code class="language-bash">ssh yn4416@100.115.156.98
+</code></pre>
+<p>パスワードなしでPCプロンプト（<code>yn4416@WIN-E2IAVN1ESMH:~$</code>）が出れば成功。</p>
+<h2>Step 7: tmux + Claude Code起動</h2>
+<pre><code class="language-bash">tmux new -s claude
+claude
+</code></pre>
+<h2>既存設定ありの場合（約3分）</h2>
+<p>以前セットアップ済みで鍵・Tailscaleが残っている場合:</p>
+<ol>
+<li>Termux起動</li>
+<li><code>ssh yn4416@100.115.156.98</code> — パスワードなしで即接続</li>
+<li><code>tmux attach -t claude</code> — 既存セッションに復帰</li>
+<li>（セッションがない場合）<code>tmux new -s claude</code> → <code>claude</code></li>
+</ol>
+
+        </article>
+
+        <nav class="chapter-nav-bottom">
+            
+            <a href="00-overview.html" class="nav-card prev">
+                <span class="nav-label">← 前の章</span>
+                <span class="nav-title">📋 概要</span>
+            </a>
+            
+            
+            <a href="02-daily.html" class="nav-card next">
+                <span class="nav-label">次の章 →</span>
+                <span class="nav-title">🔁 毎回の手順</span>
+            </a>
+            
+        </nav>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.1 · 2026.06.21</p>
+    </footer>
+
+    <script src="../assets/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+            themeVariables: { fontSize: '14px' }
+        });
+    </script>
+</body>
+</html>

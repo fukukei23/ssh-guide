@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC側ヘルスチェック — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — PC側ヘルスチェック">
+    <meta property="og:title" content="PC側ヘルスチェック — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — PC側ヘルスチェック">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/03-healthcheck.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html">🏠 ホーム</a>
+        </div>
+        
+        <a href="00-overview.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">📋</span>
+            概要
+        </a>
+        
+        <a href="01-setup.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔧</span>
+            初回セットアップ
+        </a>
+        
+        <a href="02-daily.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔁</span>
+            毎回の手順
+        </a>
+        
+        <a href="03-healthcheck.html"
+           class="sidebar-link active">
+            <span class="sidebar-icon">🩺</span>
+            PC側ヘルスチェック
+        </a>
+        
+        <a href="04-troubleshooting.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🆘</span>
+            トラブル対応
+        </a>
+        
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chapter-nav-top">
+            
+            <a href="02-daily.html" class="nav-prev">← 毎回の手順</a>
+            
+            
+            <a href="04-troubleshooting.html" class="nav-next">トラブル対応 →</a>
+            
+        </div>
+
+        <article class="chapter-body">
+            <h1>PC側ヘルスチェック — つながらない時に診断</h1>
+<p>スマホからSSH接続できない時、PC側（WSL2）で以下3点を順に確認する。</p>
+<h2>1. Tailscale 状態確認（PC側）</h2>
+<p>WSLターミナルでWindows側のTailscaleを叩く:</p>
+<pre><code class="language-bash">&quot;/mnt/c/Program Files/Tailscale/tailscale.exe&quot; status
+</code></pre>
+<p><strong>判定基準</strong>: 出力に自PC（<code>100.115.156.98</code>）が <code>active</code> / <code>online</code> で表示されること。</p>
+<ul>
+<li>表示されない → Tailscaleが起動していない。Windows側でTailscaleアプリを起動。</li>
+</ul>
+<h2>2. sshd LISTEN確認（WSL側・ポート22）</h2>
+<pre><code class="language-bash">ss -tlnp | grep :22
+</code></pre>
+<p><strong>判定基準</strong>: <code>0.0.0.0:22</code> または <code>*:22</code> が <code>LISTEN</code> として表示されること。</p>
+<ul>
+<li>表示されない → WSL内のSSHサーバー（sshd）が起動していない。<code>sudo service ssh start</code> で起動（※要ユーザー確認・sudo実行前）。</li>
+</ul>
+<h2>3. 無操作スリープ設定確認（Windows）</h2>
+<pre><code class="language-bash">powershell.exe -NoProfile -Command &quot;[Console]::OutputEncoding=[System.Text.Encoding]::UTF8; powercfg /query SCHEME_CURRENT SUB_SLEEP 29f6c1db-86da-48c5-9fdb-f2b67b1f44da&quot;
+</code></pre>
+<p><strong>判定基準</strong>: <code>STANDBYIDLE</code> の AC電源設定（<code>Current AC Power Setting Index</code>）が <code>0x00000000</code>（=スリープしない）であること。</p>
+<ul>
+<li><code>0x00000000</code> 以外 → スリープに入るとSSH接続が切れる。「カバーを閉じても何もしない」設定を見直す（01章 Step 1）。</li>
+</ul>
+<h2>診断フロー</h2>
+<pre><code>つながらない
+  ↓
+1. Tailscale status → online?
+  ├─ No → Tailscale起動
+  └─ Yes ↓
+2. ss -tlnp → :22 LISTEN?
+  ├─ No → sshd 起動
+  └─ Yes ↓
+3. powercfg → STANDBYIDLE = 0?
+  ├─ No → スリープ設定変更
+  └─ Yes → 別原因（04章 トラブル対応へ）
+</code></pre>
+
+        </article>
+
+        <nav class="chapter-nav-bottom">
+            
+            <a href="02-daily.html" class="nav-card prev">
+                <span class="nav-label">← 前の章</span>
+                <span class="nav-title">🔁 毎回の手順</span>
+            </a>
+            
+            
+            <a href="04-troubleshooting.html" class="nav-card next">
+                <span class="nav-label">次の章 →</span>
+                <span class="nav-title">🆘 トラブル対応</span>
+            </a>
+            
+        </nav>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.1 · 2026.06.21</p>
+    </footer>
+
+    <script src="../assets/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+            themeVariables: { fontSize: '14px' }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トラブル対応 — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — トラブル対応">
+    <meta property="og:title" content="トラブル対応 — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — トラブル対応">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/04-troubleshooting.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html">🏠 ホーム</a>
+        </div>
+        
+        <a href="00-overview.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">📋</span>
+            概要
+        </a>
+        
+        <a href="01-setup.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔧</span>
+            初回セットアップ
+        </a>
+        
+        <a href="02-daily.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔁</span>
+            毎回の手順
+        </a>
+        
+        <a href="03-healthcheck.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🩺</span>
+            PC側ヘルスチェック
+        </a>
+        
+        <a href="04-troubleshooting.html"
+           class="sidebar-link active">
+            <span class="sidebar-icon">🆘</span>
+            トラブル対応
+        </a>
+        
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chapter-nav-top">
+            
+            <a href="03-healthcheck.html" class="nav-prev">← PC側ヘルスチェック</a>
+            
+            
+        </div>
+
+        <article class="chapter-body">
+            <h1>トラブル対応（FAQ）</h1>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>症状</th>
+<th>原因</th>
+<th>対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>password:</code> と聞かれる</td>
+<td>ユーザー名省略 or 鍵未登録</td>
+<td><code>yn4416@</code> を付ける / <code>ssh-copy-id</code> を実行</td>
+</tr>
+<tr>
+<td><code>Connection refused</code></td>
+<td>PC側WSLが起動していない</td>
+<td>WindowsでWSLターミナルを開く</td>
+</tr>
+<tr>
+<td><code>Connection timed out</code></td>
+<td>Tailscaleがオフライン</td>
+<td>両デバイスでTailscale起動確認</td>
+</tr>
+<tr>
+<td>Termuxの画面が乱れる</td>
+<td>Termuxの描画バグ</td>
+<td><code>reset</code> コマンド or 強制終了→再起動</td>
+</tr>
+<tr>
+<td>Claude Code起動エラー</td>
+<td>settings.json hooks形式エラー</td>
+<td>PC側で <code>hooks</code> 配列形式に修正</td>
+</tr>
+<tr>
+<td><code>already exists</code> on ssh-keygen</td>
+<td>鍵が既にある</td>
+<td><code>n</code> でスキップ（既存鍵を使う）</td>
+</tr>
+<tr>
+<td><code>All keys were skipped</code> on ssh-copy-id</td>
+<td>鍵が既にPC側に登録済み</td>
+<td>問題なし。そのまま <code>ssh yn4416@...</code> で接続確認</td>
+</tr>
+<tr>
+<td>一定時間で接続が切れる</td>
+<td>PCがスリープに入っている</td>
+<td>03章ヘルスチェックのスリープ設定を確認</td>
+</tr>
+</tbody>
+</table></div>
+<h2>設定ファイルの影響</h2>
+<p>Claude Codeの <code>settings.json</code> はPC側（<code>~/.claude/settings.json</code>）のみ参照。
+スマホ側にはClaude Codeはインストールせず、SSH経由でPC上のClaude Codeを操作する。
+hooks、MCP設定等はすべてPC側で完結する。</p>
+
+        </article>
+
+        <nav class="chapter-nav-bottom">
+            
+            <a href="03-healthcheck.html" class="nav-card prev">
+                <span class="nav-label">← 前の章</span>
+                <span class="nav-title">🩺 PC側ヘルスチェック</span>
+            </a>
+            
+            
+        </nav>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.1 · 2026.06.21</p>
+    </footer>
+
+    <script src="../assets/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+            themeVariables: { fontSize: '14px' }
+        });
+    </script>
+</body>
+</html>

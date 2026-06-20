@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android SSH接続ガイド — スマホからClaude Codeを操作</title>
+    <meta name="description" content="スマホからPC（WSL2）上のClaude Code CLIを操作するSSH接続完全ガイド">
+    <meta property="og:title" content="Android SSH接続ガイド">
+    <meta property="og:description" content="スマホからPC（WSL2）上のClaude Code CLIを操作するSSH接続完全ガイド">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body class="index-page">
+    <header class="site-header">
+        <span class="site-title">📱 Android SSHガイド</span>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <main class="content">
+        <section class="hero">
+            <h1>Android SSH接続ガイド</h1>
+            <p>スマホからPC（WSL2）のClaude Codeを操作する<br>Tailscale + Termux + SSH + tmux 完全ガイド</p>
+        </section>
+
+        <section class="chapter-grid">
+            
+            <a href="chapters/00-overview.html" class="chapter-card">
+                <div class="card-icon">📋</div>
+                <div class="card-number">第00章</div>
+                <h2 class="card-title">概要</h2>
+                <p class="card-desc">使い方・前提条件・デバイス一覧</p>
+            </a>
+            
+            <a href="chapters/01-setup.html" class="chapter-card">
+                <div class="card-icon">🔧</div>
+                <div class="card-number">第01章</div>
+                <h2 class="card-title">初回セットアップ</h2>
+                <p class="card-desc">蓋閉じ・Tailscale・Termux・SSH鍵・tmux起動（約15分）</p>
+            </a>
+            
+            <a href="chapters/02-daily.html" class="chapter-card">
+                <div class="card-icon">🔁</div>
+                <div class="card-number">第02章</div>
+                <h2 class="card-title">毎回の手順</h2>
+                <p class="card-desc">ssh接続・tmux操作・切断のクイックリファレンス</p>
+            </a>
+            
+            <a href="chapters/03-healthcheck.html" class="chapter-card">
+                <div class="card-icon">🩺</div>
+                <div class="card-number">第03章</div>
+                <h2 class="card-title">PC側ヘルスチェック</h2>
+                <p class="card-desc">Tailscale状態・sshd LISTEN・スリープ設定の診断</p>
+            </a>
+            
+            <a href="chapters/04-troubleshooting.html" class="chapter-card">
+                <div class="card-icon">🆘</div>
+                <div class="card-number">第04章</div>
+                <h2 class="card-title">トラブル対応</h2>
+                <p class="card-desc">password/Connection refused/timeout等のFAQ</p>
+            </a>
+            
+        </section>
+
+        <section class="features">
+            <h2>📖 このガイドの特徴</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <span class="feature-icon">📱</span>
+                    <h3>スマホから操作</h3>
+                    <p>Android + Termux から外出先でもPCのClaude Codeを操作</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔐</span>
+                    <h3>鍵認証で安全</h3>
+                    <p>ed25519 鍵でパスワード不要・Tailscale VPN経由で暗号化</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔄</span>
+                    <h3>tmuxで常駐</h3>
+                    <p>セッションを維持したまま接続切断可能・復帰も一瞬</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🩺</span>
+                    <h3>トラブル対応</h3>
+                    <p>PC側ヘルスチェック手順とFAQでつながらない時も即解決</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.1 · 2026.06.21</p>
+    </footer>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>

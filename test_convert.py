@@ -217,9 +217,9 @@ class TestRewriteLinks:
         assert ".md" not in result
 
     def test_md_link_with_anchor(self):
-        html = '<a href="01_ディレクトリ設計.md#section">link</a>'
+        html = '<a href="01_初回セットアップ.md#section">link</a>'
         result = rewrite_links(html)
-        assert "01-structure.html#section" in result
+        assert "01-setup.html#section" in result
 
     def test_unknown_md_link_to_hash(self):
         html = '<a href="unknown_file.md">link</a>'

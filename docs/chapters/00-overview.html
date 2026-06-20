@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>概要 — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — 概要">
+    <meta property="og:title" content="概要 — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — 概要">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/00-overview.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html">🏠 ホーム</a>
+        </div>
+        
+        <a href="00-overview.html"
+           class="sidebar-link active">
+            <span class="sidebar-icon">📋</span>
+            概要
+        </a>
+        
+        <a href="01-setup.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔧</span>
+            初回セットアップ
+        </a>
+        
+        <a href="02-daily.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔁</span>
+            毎回の手順
+        </a>
+        
+        <a href="03-healthcheck.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🩺</span>
+            PC側ヘルスチェック
+        </a>
+        
+        <a href="04-troubleshooting.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🆘</span>
+            トラブル対応
+        </a>
+        
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chapter-nav-top">
+            
+            
+            <a href="01-setup.html" class="nav-next">初回セットアップ →</a>
+            
+        </div>
+
+        <article class="chapter-body">
+            <h1>概要 — スマホからClaude Codeを操作する</h1>
+<p>AndroidスマホからPC（WSL2）上のClaude Code CLIを操作する方法を解説するガイド。
+Tailscale VPN + Termux + SSH + tmux の組み合わせで、外出先からもPCの開発環境を操作できる。</p>
+<h2>前提条件</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>条件</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PC側</td>
+<td>Windows + WSL2 Ubuntu、Claude Code CLI導入済み</td>
+</tr>
+<tr>
+<td>蓋閉じ設定</td>
+<td>「カバーを閉じても何もしない」に変更済み（スリープ防止）</td>
+</tr>
+<tr>
+<td>Tailscale</td>
+<td>PC・スマホ両方にインストール＆ログイン済み</td>
+</tr>
+<tr>
+<td>ネットワーク</td>
+<td>両デバイスがTailscale上でオンライン</td>
+</tr>
+</tbody>
+</table></div>
+<h2>デバイス一覧</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>デバイス</th>
+<th>Tailscale IP</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PC（WIN-E2IAVN1ESMH）</td>
+<td>100.115.156.98</td>
+<td>オンライン（常時必要）</td>
+</tr>
+<tr>
+<td>razr-50s</td>
+<td>100.80.187.46</td>
+<td>接続済み</td>
+</tr>
+<tr>
+<td>galaxy-z-flip7</td>
+<td>100.106.53.69</td>
+<td>設定済み</td>
+</tr>
+</tbody>
+</table></div>
+<div class="callout callout-warn"><p>⚠️ Tailscale IP は環境により変動する場合がある。実際の値は各デバイスのTailscaleアプリで確認すること。</p></div>
+<h2>このガイドの構成</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>章</th>
+<th>内容</th>
+<th>初回 / 毎回</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01 初回セットアップ</td>
+<td>約15分で初期構築</td>
+<td>初回のみ</td>
+</tr>
+<tr>
+<td>02 毎回の手順</td>
+<td>ssh接続・tmux操作のクイックリファレンス</td>
+<td>毎回</td>
+</tr>
+<tr>
+<td>03 PC側ヘルスチェック</td>
+<td>つながらない時のPC側診断</td>
+<td>必要時</td>
+</tr>
+<tr>
+<td>04 トラブル対応</td>
+<td>よくあるエラーと対処法</td>
+<td>必要時</td>
+</tr>
+</tbody>
+</table></div>
+<h2>旧版履歴</h2>
+<p>本ガイドは旧 <code>https://fukukei23.github.io/guides/ssh-guide/</code> から移行した。旧URLは新URLへ自動リダイレクトする。</p>
+
+        </article>
+
+        <nav class="chapter-nav-bottom">
+            
+            
+            <a href="01-setup.html" class="nav-card next">
+                <span class="nav-label">次の章 →</span>
+                <span class="nav-title">🔧 初回セットアップ</span>
+            </a>
+            
+        </nav>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.1 · 2026.06.21</p>
+    </footer>
+
+    <script src="../assets/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+            themeVariables: { fontSize: '14px' }
+        });
+    </script>
+</body>
+</html>
