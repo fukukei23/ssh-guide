@@ -168,6 +168,67 @@ claude
 </ol>
 <p>接続先が変わるだけで、セッションはずっとPC上で生きています。</p>
 <hr />
+<h2>tmux を使わずに <code>claude</code> を起動していた場合は？</h2>
+<p>ここまでの手順は <strong>すべて「tmux の中で <code>claude</code> を起動していた」ことが前提</strong>です。
+tmux を挟まずに WSL ターミナルで直接 <code>claude</code> を動かしていた場合、引き継ぎの挙動が変わります。</p>
+<h3>tmux あり / なし の特徴比較</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>特徴</th>
+<th>tmux あり（本ガイド推奨）</th>
+<th>tmux なし（直接起動）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>プロセスの生死</td>
+<td>接続を切っても <strong>生き続ける</strong></td>
+<td>接続を切ると <strong>SIGHUP で道連れ終了</strong></td>
+</tr>
+<tr>
+<td>スマホへの持ち出し</td>
+<td><code>tmux attach</code> で<strong>そのまま再開</strong></td>
+<td><strong>不可</strong>（プロセスが死ぬため）</td>
+</tr>
+<tr>
+<td>実行中タスクの扱い</td>
+<td>そのまま継続</td>
+<td><strong>失われる</strong>（書き出し中等は消失）</td>
+</tr>
+<tr>
+<td>復元できるのは</td>
+<td>プロセスの「実状態」まるごと</td>
+<td>「会話の文脈」のみ</td>
+</tr>
+<tr>
+<td>事前準備</td>
+<td><code>tmux new -s claude</code> が必要</td>
+<td>なし（そのまま <code>claude</code>）</td>
+</tr>
+</tbody>
+</table></div>
+<h3>なぜ tmux なしだと死ぬのか</h3>
+<p>tmux を挟まないと、<code>claude</code> プロセスは<strong>ターミナル接続に紐付いて</strong>動きます。
+PCをスリープ/シャットダウンしたりターミナルを閉じると、親であるシェルが終了し、子の <code>claude</code> プロセスも <strong>SIGHUP シグナルで道連れ</strong>になります。tmux はこの接続とプロセスを分離して保持する役割を担っています。</p>
+<div class="callout callout-warn"><p>⚠️ つまり tmux なしでは、PCで動かしている <code>claude</code> にスマホから届く方法がありません。SSH で入っても<strong>別のシェル</strong>が起動するだけで、元プロセスには触れません。</p></div>
+<h3>救済策 — 会話はPCに残っている</h3>
+<p>プロセスは死にますが、<strong>Claude Code の会話履歴は PC 側（<code>~/.claude/projects/</code>）に自動保存</strong>されています。スマホから「会話の続き」として再開できます：</p>
+<pre><code class="language-bash"># スマホのTermuxで
+ssh yn4416@100.115.156.98
+claude -c              # 直近の会話を続きから再開（--continue の短縮形）
+# または
+claude --resume        # 過去セッション一覧から選んで再開
+</code></pre>
+<div class="callout callout-danger"><p>💡 復元できるのは「会話の文脈」までです。実行中だった長時間タスク（ファイル書き出しの最中等）は道連れで失われるため、重要な作業の前に tmux に入るのが安全です。</p></div>
+<h3>今後の予防策</h3>
+<p><code>claude</code> を起動する時は<strong>必ず tmux の中で</strong>：</p>
+<pre><code class="language-bash">tmux new -s claude    # ← これを先に（tmux セッション作成）
+claude                # ← その中で Claude Code を起動
+</code></pre>
+<p>この1行を挟むだけでプロセスが接続切断から守られ、スマホ⇄PC の引き継ぎが可能になります。</p>
+<div class="callout callout-warn"><p>⚠️ <strong>後から tmux に入れるのは難しい</strong>: 既に直接起動したプロセスを後から tmux に移行するツール（<code>reptyr</code> 等）もありますが、Claude Code のようなインタラクティブ TUI では画面が乱れやすく実用的ではありません。<strong>起動時に tmux を挟む</strong>のが確実です。</p></div>
+<hr />
 <h2>関連</h2>
 <ul>
 <li><a href="02-daily.html">02 毎回の手順</a> — tmux の基本操作一覧</li>
@@ -193,7 +254,7 @@ claude
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
-        <p class="site-version">v1.2 · 2026.07.02</p>
+        <p class="site-version">v1.3 · 2026.07.02</p>
     </footer>
 
     <script src="../assets/script.js"></script>
