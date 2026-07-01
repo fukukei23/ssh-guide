@@ -48,6 +48,7 @@ CHAPTER_MAP = {
     "02_毎回の手順.md": {"slug": "02-daily", "title": "毎回の手順", "icon": "🔁", "desc": "ssh接続・tmux操作・切断のクイックリファレンス"},
     "03_PC側ヘルスチェック.md": {"slug": "03-healthcheck", "title": "PC側ヘルスチェック", "icon": "🩺", "desc": "Tailscale状態・sshd LISTEN・スリープ設定の診断"},
     "04_トラブル対応.md": {"slug": "04-troubleshooting", "title": "トラブル対応", "icon": "🆘", "desc": "password/Connection refused/timeout等のFAQ"},
+    "05_スマホからPCへの引き継ぎ.md": {"slug": "05-handoff", "title": "スマホからPCへの引き継ぎ", "icon": "🔄", "desc": "外出先の作業をPCの大画面で続きから・同時ミラーリングも"},
 }
 
 

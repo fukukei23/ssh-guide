@@ -61,6 +61,12 @@
             トラブル対応
         </a>
         
+        <a href="05-handoff.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔄</span>
+            スマホからPCへの引き継ぎ
+        </a>
+        
     </nav>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -118,6 +124,12 @@ claude
 <li><code>exit</code>（SSH切断）</li>
 </ol>
 <p>Claude Codeはtmux内で動き続けます。接続を切ってもセッションは維持されます。</p>
+<h2>スマホ → PC への引き継ぎ</h2>
+<p>スマホの作業をPCに引き継ぐときも、PC側で同じセッションにアタッチするだけです。</p>
+<pre><code class="language-bash"># PCのWSLターミナルで
+tmux attach -t claude
+</code></pre>
+<div class="callout callout-tip"><p>💡 詳細手順（同時ミラーリング・逆方向・トラブル時）は <a href="05-handoff.html">05 スマホからPCへの引き継ぎ</a> を参照。</p></div>
 
         </article>
 
@@ -142,7 +154,7 @@ claude
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
-        <p class="site-version">v1.1 · 2026.06.21</p>
+        <p class="site-version">v1.2 · 2026.07.02</p>
     </footer>
 
     <script src="../assets/script.js"></script>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スマホからPCへの引き継ぎ — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — スマホからPCへの引き継ぎ">
+    <meta property="og:title" content="スマホからPCへの引き継ぎ — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — スマホからPCへの引き継ぎ">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/05-handoff.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html">🏠 ホーム</a>
+        </div>
+        
+        <a href="00-overview.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">📋</span>
+            概要
+        </a>
+        
+        <a href="01-setup.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔧</span>
+            初回セットアップ
+        </a>
+        
+        <a href="02-daily.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔁</span>
+            毎回の手順
+        </a>
+        
+        <a href="03-healthcheck.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🩺</span>
+            PC側ヘルスチェック
+        </a>
+        
+        <a href="04-troubleshooting.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🆘</span>
+            トラブル対応
+        </a>
+        
+        <a href="05-handoff.html"
+           class="sidebar-link active">
+            <span class="sidebar-icon">🔄</span>
+            スマホからPCへの引き継ぎ
+        </a>
+        
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chapter-nav-top">
+            
+            <a href="04-troubleshooting.html" class="nav-prev">← トラブル対応</a>
+            
+            
+        </div>
+
+        <article class="chapter-body">
+            <h1>05 スマホからPCへの引き継ぎ — 同じセッションをPCで続きから</h1>
+<div class="callout callout-info"><p>外出先のスマホで進めていた作業を、帰宅後にPCの大きな画面でそのまま再開する手順。</p></div>
+<hr />
+<h2>なぜ「引き継ぎ」が簡単なのか</h2>
+<p>Claude Code は<strong>PC（WSL2）上の <code>claude</code> という名前の tmux セッション</strong>で動いています。
+スマホ（Termux）は SSH でそのセッションに「アタッチ（接続して覗く）」しているだけです。</p>
+<p>つまり、<strong>セッションの実体は常にPC側にあります。</strong> スマホを閉じてもセッションは消えません。
+PC側のWSLターミナルから同じセッションにアタッチするだけで、スマホの作業をそのままPCに引き継げます。</p>
+<div class="callout callout-tip"><p>💡 <strong>tmux の最大の利点</strong>: 接続先を変えてもセッション（プロセス）が生き続けること。スマホ⇄PC間の「引き継ぎ」は特別な操作不要で、単にアタッチし直すだけです。</p></div>
+<hr />
+<h2>基本手順（スマホ → PC）</h2>
+<h3>Step 1: スマホ側 — セッションを残して抜ける</h3>
+<p>スマホのTermuxで以下のいずれかを行います。</p>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>コマンド</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>デタッチ（推奨）</td>
+<td><code>Ctrl+B</code> → <code>D</code></td>
+<td>tmuxから抜けるがセッションは維持</td>
+</tr>
+<tr>
+<td>SSH切断だけ</td>
+<td><code>exit</code></td>
+<td>SSH接続を切る（セッションは維持）</td>
+</tr>
+</tbody>
+</table></div>
+<p>どちらでも <strong>Claude Code のセッションはPC上で動き続けます。</strong></p>
+<h3>Step 2: PC側 — WSLターミナルを開く</h3>
+<p>Windows側でWSL2 Ubuntuのターミナルを開きます（Windows Terminal / VS Code 等）。</p>
+<h3>Step 3: PC側 — 同じセッションにアタッチ</h3>
+<pre><code class="language-bash">tmux attach -t claude
+</code></pre>
+<p>これで <strong>スマホで作業していた画面がそのままPCに表示されます。</strong>
+入力履歴・スクロールバッファ・実行中のプロセスもすべて引き継がれます。</p>
+<div class="callout callout-warn"><p>⚠️ <strong>注意</strong>: セッション名 <code>claude</code> は 01章 Step 7 で作成した名前です。別の名前で作った場合は <code>tmux ls</code> で確認してください。</p></div>
+<hr />
+<h2>クイック版（コピペ用）</h2>
+<pre><code class="language-bash"># スマホ側: 抜ける（セッションは残す）
+#   Ctrl+B を押して離し、D
+
+# PC側: WSLターミナルを開いて
+tmux attach -t claude
+</code></pre>
+<hr />
+<h2>同じセッションを「同時」に見る（ミラーリング）</h2>
+<p>tmux は <strong>複数の端末から同時に同じセッションにアタッチ</strong> できます。
+スマホをデタッチせずにPCからアタッチすると、両方の画面に同じ内容が表示されます。</p>
+<pre><code class="language-bash"># スマホはそのまま（デタッチしない）
+# PC側で
+tmux attach -t claude    # ← -t だけ（既存セッションへ参加）
+</code></pre>
+<p>用途: スマホを「モニター」として置きつつ、PCで操作したい時に便利。</p>
+<div class="callout callout-tip"><p>💡 完全にPCへ切り替えたい時は Step 1 のようにスマホをデタッチしましょう。同じ画面を2台で操作すると入力が衝突します。</p></div>
+<hr />
+<h2>セッションが見つからない時</h2>
+<h3><code>no sessions</code> / <code>can't find session: claude</code></h3>
+<pre><code class="language-bash">tmux ls
+</code></pre>
+<p>で存在するセッション一覧を確認。</p>
+<ul>
+<li>
+<p><strong>セッションが無い</strong> → PC再起動等で消えた。新規作成して <code>claude</code> を起動:</p>
+<pre><code class="language-bash">tmux new -s claude
+claude
+</code></pre>
+<p>※ 元のスマホ作業状態は復元できません（tmux外で動いていなかった場合）。</p>
+</li>
+<li>
+<p><strong>別の名前で残っている</strong> → その名前でアタッチ: <code>tmux attach -t &lt;名前&gt;</code></p>
+</li>
+</ul>
+<hr />
+<h2>逆方向（PC → スマホ）の引き継ぎも同じ</h2>
+<p>PCでの作業を外出先に持ち出す時も、手順は鏡写しです:</p>
+<ol>
+<li>PC側: <code>Ctrl+B</code> → <code>D</code>（デタッチ）</li>
+<li>スマホ側: Termux で <code>ssh yn4416@100.115.156.98</code></li>
+<li><code>tmux attach -t claude</code></li>
+</ol>
+<p>接続先が変わるだけで、セッションはずっとPC上で生きています。</p>
+<hr />
+<h2>関連</h2>
+<ul>
+<li><a href="02-daily.html">02 毎回の手順</a> — tmux の基本操作一覧</li>
+<li><a href="03-healthcheck.html">03 PC側ヘルスチェック</a> — アタッチできない時のPC側診断</li>
+<li><a href="04-troubleshooting.html">04 トラブル対応</a> — よくあるエラーと対処法</li>
+</ul>
+
+        </article>
+
+        <nav class="chapter-nav-bottom">
+            
+            <a href="04-troubleshooting.html" class="nav-card prev">
+                <span class="nav-label">← 前の章</span>
+                <span class="nav-title">🆘 トラブル対応</span>
+            </a>
+            
+            
+        </nav>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.2 · 2026.07.02</p>
+    </footer>
+
+    <script src="../assets/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+            themeVariables: { fontSize: '14px' }
+        });
+    </script>
+</body>
+</html>
