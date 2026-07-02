@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リモート運用のベストプラクティス — Android SSHガイド</title>
+    <meta name="description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — リモート運用のベストプラクティス">
+    <meta property="og:title" content="リモート運用のベストプラクティス — Android SSHガイド">
+    <meta property="og:description" content="スマホからPCのClaude Codeを操作するSSH接続ガイド — リモート運用のベストプラクティス">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fukukei23.github.io/ssh-guide/chapters/06-best-practices.html">
+    <meta property="og:image" content="https://fukukei23.github.io/ssh-guide/assets/ogp.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+</head>
+<body>
+    <header class="site-header">
+        <button class="menu-toggle" aria-label="メニュー" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="site-title">📱 Android SSHガイド</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
+            <span class="icon-light">☀️</span>
+            <span class="icon-dark">🌙</span>
+        </button>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../index.html">🏠 ホーム</a>
+        </div>
+        
+        <a href="00-overview.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">📋</span>
+            概要
+        </a>
+        
+        <a href="01-setup.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔧</span>
+            初回セットアップ
+        </a>
+        
+        <a href="02-daily.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔁</span>
+            毎回の手順
+        </a>
+        
+        <a href="03-healthcheck.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🩺</span>
+            PC側ヘルスチェック
+        </a>
+        
+        <a href="04-troubleshooting.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🆘</span>
+            トラブル対応
+        </a>
+        
+        <a href="05-handoff.html"
+           class="sidebar-link">
+            <span class="sidebar-icon">🔄</span>
+            スマホからPCへの引き継ぎ
+        </a>
+        
+        <a href="06-best-practices.html"
+           class="sidebar-link active">
+            <span class="sidebar-icon">🛡️</span>
+            リモート運用のベストプラクティス
+        </a>
+        
+    </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="content">
+        <div class="chapter-nav-top">
+            
+            <a href="05-handoff.html" class="nav-prev">← スマホからPCへの引き継ぎ</a>
+            
+            
+        </div>
+
+        <article class="chapter-body">
+            <h1>06 リモート運用のベストプラクティス — 事前にやっておく・知っておく</h1>
+<div class="callout callout-info"><p>繋ぐ・操作する・引き継ぐは前章まで。本章は <strong>「安定し続ける・事故に強い」</strong> ための運用知識です。いざという時に慌てないよう、<strong>最初に一読しておく</strong>のがおすすめ。</p></div>
+<hr />
+<h2>1. スマホ紛失時に即座に無効化する（revoke 手順）</h2>
+<p>SSH鍵は パスフレーズなし（<code>-N &quot;&quot;</code>）で作っているため、<strong>スマホ紛失＝即PC侵入リスク</strong>になります。紛失に気づいた瞬間に以下の2本斧で遮断します。</p>
+<h3>手順A：PC側で該当鍵を削除</h3>
+<p>PC側のWSLターミナルで <code>~/.ssh/authorized_keys</code> を開き、<strong>紛失したスマホの鍵の1行を削除</strong>します。</p>
+<pre><code class="language-bash"># 登録済み鍵の一覧を確認（コメント付きで表示）
+cat ~/.ssh/authorized_keys
+</code></pre>
+<p>該当行（紛失スマホの公開鍵）を1行削除して保存。即座にその鍵ではログインできなくなります。</p>
+<div class="callout callout-warn"><p>⚠️ <strong>現在の課題</strong>: 本ガイドの手順で作った鍵のコメントは <code>u0_aXX@localhost</code>（Termuxの内部ユーザー名）になり、<strong>どの物理スマホか判別できません</strong>。複数スマホを登録していると紛失時に特定に手間取ります。次の <strong>予防策</strong> で識別コメントを付けておくのが安全です。</p></div>
+<h3>手順B：Tailscale 側でデバイス削除</h3>
+<p>Tailscale管理画面（ https://login.tailscale.com/admin/machines ）を開き、紛失したスマホのデバイスの「⋯」→ <strong>Remove</strong>。VPNネットワークからも除外します。</p>
+<h3>予防策：鍵に識別コメントを付ける</h3>
+<p>鍵作成時に <code>-C</code> でデバイス名を付けておくと、紛失時に一目で特定できます。</p>
+<pre><code class="language-bash"># スマホのTermuxで（例: razr-50s という端末名）
+ssh-keygen -t ed25519 -N &quot;&quot; -C &quot;razr-50s&quot; -f ~/.ssh/id_ed25519
+</code></pre>
+<div class="callout callout-tip"><p>💡 <strong>スマホ本体のロックも必須</strong>: Termuxを起動できれば誰でもSSHできます。スマホのPIN/生体認証ロックは必ず掛けてください。</p></div>
+<hr />
+<h2>2. PC再起動後も自動で復旧させる</h2>
+<p>Windows Update や突発的な再起動があると、<strong>Tailscale / WSL / sshd の3プロセスとtmuxセッションが全部消えます</strong>。外出先で「繋ごうとしたら再起動後で何も動いていない」を防ぐ設定です。</p>
+<h3>2-1. sshd を自動起動させる（systemd）</h3>
+<p>本環境は <code>/etc/wsl.conf</code> で systemd が有効（<code>systemd=true</code>）なので、一度だけ有効化すれば永続します：</p>
+<pre><code class="language-bash"># PC側WSLで（要ユーザー確認・sudo実行前）
+sudo systemctl enable ssh
+sudo systemctl start ssh
+</code></pre>
+<div class="callout callout-warn"><p>⚠️ sudo実行前はユーザー確認ルール。実行は自己責任で。</p></div>
+<h3>2-2. Tailscale（Windows側）を自動起動</h3>
+<p>Windows側の設定 → アプリ → スタートアップ で Tailscale が有効か確認。通常はインストール時点で有効ですが、念のため確認します。</p>
+<h3>2-3. WSL自体を起動しておく</h3>
+<p>Windowsログイン後に一度でもWSLターミナルを開けば sshd が立ち上がります。<strong>「蓋を閉じてもスリープしない」設定（01章 Step 1）と組み合わせて、PCはログイン済みのまま置いておく</strong>のが運用の前提になります。</p>
+<div class="callout callout-tip"><p>💡 <strong>再起動後の確認</strong>: 復旧できているかは <a href="03-healthcheck.html">03 PC側ヘルスチェック</a> の <code>ss -tlnp | grep :22</code> で sshd LISTEN を確認すればOK。</p></div>
+<hr />
+<h2>3. Termux で tmux の <code>Ctrl+B</code> を打つには</h2>
+<p>スマホのソフトキーボードには <strong>Ctrlキーがありません</strong>。02章の全手順（<code>Ctrl+B → D</code> 等）は Termux の修飾キー割り当てで代用します。</p>
+<h3>Termuxの修飾キー対応表</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>PCでの入力</th>
+<th>Termuxでの入力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl + B</code></td>
+<td><strong>音量下 + B</strong></td>
+</tr>
+<tr>
+<td><code>Ctrl + C</code></td>
+<td>音量下 + C</td>
+</tr>
+<tr>
+<td><code>Alt + ?</code></td>
+<td>音量上 + ?</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td>音量上 + e</td>
+</tr>
+<tr>
+<td><code>Tab</code></td>
+<td>音量上 + t</td>
+</tr>
+</tbody>
+</table></div>
+<p>つまり <strong>tmuxのデタッチ（<code>Ctrl+B → D</code>）は「音量下+B → 離す → D」</strong> で行います。</p>
+<h3>拡張キーボードバーを出す（推奨）</h3>
+<p>Termuxは画面上部に <strong>拡張キーボードバー</strong>（Ctrl/Alt/Esc/Tab/方向キー等の特殊キー）を表示できます。</p>
+<ul>
+<li><strong>音量上 + Q</strong> を押す → バーの表示/非表示切り替え</li>
+<li>バーの <code>CTRL</code> をタップしてから <code>B</code> を押せば Ctrl+B 相当</li>
+</ul>
+<div class="callout callout-tip"><p>💡 物理キーボードをBluetooth接続すれば、PCと同じように普通に <code>Ctrl+B</code> が打てます。長時間作業なら有力な選択肢です。</p></div>
+<hr />
+<h2>4. モバイル回線で接続が切れないようにする（KeepAlive）</h2>
+<p>移動中の電波切替や一時的な通信断で、SSH接続が頻発切断するのを防ぎます。</p>
+<h3>スマホ側（Termux）の設定</h3>
+<p>Termuxの <code>~/.ssh/config</code> を作成・編集：</p>
+<pre><code class="language-bash">mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/config &lt;&lt;'EOF'
+Host 100.115.156.98
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+EOF
+chmod 600 ~/.ssh/config
+</code></pre>
+<p>60秒ごとにkeepaliveパケットを送り、3回連続で応答がない時だけ切断判定します。NATタイムアウトやモバイル回線の一時断で切れにくくなります。</p>
+<div class="callout callout-tip"><p>💡 PC側（<code>/etc/ssh/sshd_config</code> の <code>ClientAliveInterval 60</code>）でも同様に設定できますが、<strong>スマホ側だけで十分</strong>です。PC側は全クライアントに影響するため、まずはスマホ側で試しましょう。</p></div>
+<hr />
+<h2>5. IP変動を気にしない運用（MagicDNS）</h2>
+<p>概要で「Tailscale IPは変動する場合がある」と注記しましたが、<strong>MagicDNS</strong> を使えばデバイス名で接続できIP変動を気にしません。</p>
+<h3>設定手順</h3>
+<ol>
+<li>Tailscale管理画面（ https://login.tailscale.com/admin/dns ）で <strong>MagicDNS</strong> を有効化（通常はデフォルト有効）</li>
+<li>デバイス一覧で自PCの <strong>デバイス名</strong> を確認（例: <code>win-e2iavn1esmh</code>、分かりやすい名前に変更も可能）</li>
+<li>以降はIPでなくデバイス名で接続：</li>
+</ol>
+<pre><code class="language-bash">ssh yn4416@win-e2iavn1esmh
+</code></pre>
+<div class="callout callout-warn"><p>⚠️ Termux側でMagicDNSの名前解決が効くかは環境依存です。繋がらない場合は従来通りIP（<code>100.115.156.98</code>）を使用してください。IPは各デバイスのTailscaleアプリで確認できます。</p></div>
+<hr />
+<h2>まとめ — 事前にやっておくチェックリスト</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th>やること</th>
+<th>章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>鍵に識別コメントを付ける（<code>-C &quot;端末名&quot;</code>）</td>
+<td>本章 1</td>
+</tr>
+<tr>
+<td>sshd 自動起動を有効化（<code>systemctl enable ssh</code>）</td>
+<td>本章 2</td>
+</tr>
+<tr>
+<td>Tailscale の自動起動を確認</td>
+<td>本章 2</td>
+</tr>
+<tr>
+<td>Termuxで <code>音量上+Q</code> から拡張キーボードバーを出す</td>
+<td>本章 3</td>
+</tr>
+<tr>
+<td>Termuxの <code>~/.ssh/config</code> に KeepAlive 設定</td>
+<td>本章 4</td>
+</tr>
+<tr>
+<td>MagicDNS 有効化＋デバイス名接続</td>
+<td>本章 5</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>関連</h2>
+<ul>
+<li><a href="00-overview.html">00 概要</a> — 前提条件・デバイス一覧</li>
+<li><a href="01-setup.html">01 初回セットアップ</a> — 蓋閉じスリープ防止（再起動運用の前提）</li>
+<li><a href="02-daily.html">02 毎回の手順</a> — TermuxのCtrl+B対応は本章 3 を参照</li>
+<li><a href="03-healthcheck.html">03 PC側ヘルスチェック</a> — 再起動後のsshd LISTEN確認</li>
+<li><a href="04-troubleshooting.html">04 トラブル対応</a> — よくあるエラーと対処法</li>
+</ul>
+
+        </article>
+
+        <nav class="chapter-nav-bottom">
+            
+            <a href="05-handoff.html" class="nav-card prev">
+                <span class="nav-label">← 前の章</span>
+                <span class="nav-title">🔄 スマホからPCへの引き継ぎ</span>
+            </a>
+            
+            
+        </nav>
+    </main>
+
+    <footer class="site-footer">
+        <p>Android SSHガイド — <a href="https://github.com/fukukei23/ssh-guide">GitHub</a>
+         · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
+         · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
+         · <a href="https://fukukei23.github.io/">fukukei23</a></p>
+        <p class="site-version">v1.4 · 2026.07.02</p>
+    </footer>
+
+    <script src="../assets/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+            themeVariables: { fontSize: '14px' }
+        });
+    </script>
+</body>
+</html>
