@@ -88,6 +88,14 @@
 
         <article class="chapter-body">
             <h1>毎回の手順（クイックリファレンス）</h1>
+<aside class="tldr">
+<p><strong>3行で分かる</strong></p>
+<ol>
+<li>Tailscale IPを確認 → <code>ssh yn4416@&lt;IP&gt;</code> でPCに接続</li>
+<li><code>tmux attach -t claude</code> で前回のセッションを再開</li>
+<li>終了時は detach（<code>Ctrl+b d</code>）で切らずに保存・離脱</li>
+</ol>
+</aside>
 <h2>接続（3行）</h2>
 <pre><code class="language-bash">ssh yn4416@100.115.156.98
 tmux attach -t claude
@@ -160,7 +168,7 @@ tmux attach -t claude
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
-        <p class="site-version">v1.4 · 2026.07.02</p>
+        <p class="site-version">v1.6 · 2026.07.17</p>
     </footer>
 
     <script src="../assets/script.js"></script>

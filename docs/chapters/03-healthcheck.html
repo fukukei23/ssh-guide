@@ -88,6 +88,14 @@
 
         <article class="chapter-body">
             <h1>PC側ヘルスチェック — つながらない時に診断</h1>
+<aside class="tldr">
+<p><strong>3行で分かる</strong></p>
+<ol>
+<li>つながらない時はPC側で「Tailscale状態 → WSL起動 → sshd」の3点を順に確認</li>
+<li><code>tailscale status</code> / WSL起動確認 / <code>sudo service ssh status</code> を叩く</li>
+<li>だいたいWSL未起動かTailscale未接続が原因</li>
+</ol>
+</aside>
 <p>スマホからSSH接続できない時、PC側（WSL2）で以下3点を順に確認する。</p>
 <h2>1. Tailscale 状態確認（PC側）</h2>
 <p>WSLターミナルでWindows側のTailscaleを叩く:</p>
@@ -148,7 +156,7 @@
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
-        <p class="site-version">v1.4 · 2026.07.02</p>
+        <p class="site-version">v1.6 · 2026.07.17</p>
     </footer>
 
     <script src="../assets/script.js"></script>

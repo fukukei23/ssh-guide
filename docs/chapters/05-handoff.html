@@ -88,6 +88,14 @@
 
         <article class="chapter-body">
             <h1>05 スマホからPCへの引き継ぎ — 同じセッションをPCで続きから</h1>
+<aside class="tldr">
+<p><strong>3行で分かる</strong></p>
+<ol>
+<li>tmuxのおかげでスマホの作業を帰宅後のPCでそのまま再開できる</li>
+<li>PCで同じSSH/tmuxセッションに <code>tmux attach</code> するだけ</li>
+<li>セッションは detach で保存され、kill しなければ生き続ける</li>
+</ol>
+</aside>
 <div class="callout callout-info"><p>外出先のスマホで進めていた作業を、帰宅後にPCの大きな画面でそのまま再開する手順。</p></div>
 <hr />
 <h2>なぜ「引き継ぎ」が簡単なのか</h2>
@@ -267,7 +275,7 @@ claude                # ← その中で Claude Code を起動
          · <a href="https://fukukei23.github.io/claude-code-guide/">Claude Code Guide</a>
          · <a href="https://fukukei23.github.io/guides/">技術ガイド集</a>
          · <a href="https://fukukei23.github.io/">fukukei23</a></p>
-        <p class="site-version">v1.4 · 2026.07.02</p>
+        <p class="site-version">v1.6 · 2026.07.17</p>
     </footer>
 
     <script src="../assets/script.js"></script>
